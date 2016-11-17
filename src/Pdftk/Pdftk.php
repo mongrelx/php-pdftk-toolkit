@@ -92,15 +92,22 @@ class Pdftk
      */
     public function setBinary($sBinary)
     {
-        if (!file_exists($sBinary))
-        {
-            throw new \Exception('PDFTK path is incorrect');
+        if (DIRECTORY_SEPARATOR == '\\') {
+            // windows needs cd to dir atleast under iis
+            //'cd c:\Program Files (x86)\PDFtk\bin&pdftk.exe'
         }
-
+        else
+        {
+            if (!file_exists($sBinary))
+            {
+                throw new \Exception('PDFTK path is incorrect');
+            }
+        }
         $this->sBinary = $sBinary;
         return $this;
     }
 
+    
     /**
      * Sets the level of encryption to be used (if owner/user password is specified).
      * e.g. $foo->setEncryptionLevel(128);
@@ -138,8 +145,11 @@ class Pdftk
      */
     public function getPdftkVersion()
     {
-        return $this->exec($this->sBinary . ' --version | grep ^pdftk | cut -d " " -f2');
+       $version =$this->_exec($this->sBinary . ' --version ');
+       preg_match('/pdftk\s+(\d+.\d+)\s+a/',$version['stdout'],$match);
+       return  $match[1];   
     }
+    
 
     /**
      * Sets the users password for the ouput file
