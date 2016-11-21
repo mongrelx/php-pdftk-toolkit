@@ -16,6 +16,7 @@ class Input
     protected $sAlternatePages = null; //odd or even
     protected $sRotation = null; //north, east, south or west
     protected $sOverride = null; //In-case the string is complex
+    protected $mPages = null;
 
     public function __construct($aParams = array())
     {
@@ -119,6 +120,19 @@ class Input
     {
         return $this->sPassword;
     }
+    
+    /**
+     * Set pages to read from     
+     *
+     * @param mixed $mPages
+     * @return $this
+     */
+    
+     public  function setPages($mPages)
+    {
+        $this->mPages=$mPages;
+        return $this;
+    }
 
     /**
      * Set the start page to read from
@@ -190,14 +204,31 @@ class Input
      *
      * @return string
      */
-    public function getCatCommand()
+    public function getCatCommand($handle)
     {
         if ($this->sOverride !== null) {
             return $this->sOverride;
         }
 
         $aCommand = array();
-
+        if ($this->mPages != null)
+        {
+            $i=0;
+            foreach ($this->mPages as $page)
+            {
+                if ($i<1)
+                {
+                $aCommand[] = $page;
+                }
+                else
+                {
+                    $aCommand[] = ' '.$handle.$page;
+                }
+                $i++;
+            }
+        }
+        else
+        {
         //Page Numbers and Qualifiers
         if ($this->mStartPage !== null) {
             $aCommand[] = $this->mStartPage;
@@ -216,6 +247,7 @@ class Input
             $aCommand[] = $this->aRotations[$this->sRotation];
         }
 
-        return implode('', $aCommand);
+        return $handle.implode('', $aCommand);
+        }
     }
 }
