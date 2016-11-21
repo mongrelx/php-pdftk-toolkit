@@ -390,7 +390,7 @@ class Pdftk
                 } else {
                     $handle = chr(65 + $iKey);
                 }
-                $aCommand[] = $handle . $oFile->getCatCommand();
+                $aCommand[] = $oFile->getCatCommand($handle);
             }
         }
 
